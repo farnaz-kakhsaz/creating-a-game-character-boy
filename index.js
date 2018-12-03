@@ -1,17 +1,19 @@
+var canvas;
+var context;
 // LoadImage Function:
 var images = {};
 
 // ResourceLoaded Function:
-var totalResources = 6;
+var totalResources = 3;
 var numResourcesLoaded = 0;
 var fps = 30;
 
 // Redraw Function:
-var context = document.getElementById("canvas").getContext("2d");
 var charX = 220;
 var charY = 250;
 var x = charX;
 var y = charY;
+var jumpHeight = 45;
 
 // UpdateBreath Function:
 var breathInc = 0.1;
@@ -27,6 +29,22 @@ var eyeOpenTime = 0;
 var timeBtwBlinks = 4000;
 var blinkUpdateTime = 200;
 var blinkTimer = setInterval(updateBlink, blinkUpdateTime);
+
+//Jump & Land Functions:
+var jumping = false;
+
+// Create the canvas (Neccessary for IE because it doesn't know what a canvas element is)
+function prepareCanvas(canvasDiv, canvasWidth, canvasHeight) {
+  canvas = document.createElement("canvas");
+  canvas.setAttribute("width", canvasWidth);
+  canvas.setAttribute("height", canvasHeight);
+  canvas.setAttribute("id", "canvas");
+  canvasDiv.appendChild(canvas);
+}
+
+loadImage("leftArm-jump");
+loadImage("legs-jump");
+loadImage("rightArm-jump");
 
 loadImage("leftArm");
 loadImage("legs");
@@ -62,9 +80,9 @@ function redraw() {
   context.drawImage(images["leftArm"], x + 40, y - 42 - breathAmt);
   context.drawImage(images["legs"], x, y);
   context.drawImage(images["torso"], x, y - 50);
-  context.drawImage(images["rightArm"], x - 15, y - 42 - breathAmt);
   context.drawImage(images["head"], x - 10, y - 125 - breathAmt);
   context.drawImage(images["hair"], x - 37, y - 138 - breathAmt);
+  context.drawImage(images["rightArm"], x - 15, y - 42 - breathAmt);
 
   drawEllipse(x + 47, y - 68, 8, curEyeHeight); // Left Eye
   drawEllipse(x + 58, y - 68, 8, curEyeHeight); // Right Eye
@@ -129,5 +147,18 @@ function updateBreath() {
     if (breathAmt > breathMax) {
       breathDir = 1;
     }
+  }
+
+  //Jump Function
+  function jump() {
+    if (!jumping) {
+      jumping = true;
+      setTimeout(land, 500);
+    }
+  }
+
+  //Land Function
+  function land() {
+    jumping = false;
   }
 }
